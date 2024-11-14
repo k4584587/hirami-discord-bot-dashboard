@@ -2,12 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
     const searchParams = useSearchParams();
-    // ESLint가 이 변수가 사용되는 것을 인식할 수 있도록 주석 추가
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     const from = searchParams.get('from') ?? '/dashboard';
 
