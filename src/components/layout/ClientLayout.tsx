@@ -1,3 +1,4 @@
+// src/components/ClientLayout.tsx
 'use client';
 
 import { useState } from "react";
@@ -21,7 +22,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
             <div className={`
                 lg:ml-64 
                 transition-all duration-300 ease-in-out
-                flex flex-col min-h-screen
+                flex flex-col flex-1
             `}>
                 {/* 상단 네비게이션 바 */}
                 <nav className="h-16 border-b border-muted bg-secondary sticky top-0 z-30">
