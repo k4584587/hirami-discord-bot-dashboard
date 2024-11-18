@@ -9,15 +9,16 @@ import { useTheme } from "@/components/providers/theme-provider";
 import { useSession, signIn, signOut } from "next-auth/react";
 import {
     DropdownMenu,
+    DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu-custom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter, usePathname } from "next/navigation";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false); // 드롭다운 열림 상태 관리
     const { theme, setTheme } = useTheme();
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -80,8 +81,12 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
 
                             {status === "authenticated" && session.user ? (
                                 <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                                    <DropdownMenuTrigger>
+                                        <Button
+                                            variant="ghost"
+                                            className="relative h-8 w-8 rounded-full"
+                                            onClick={() => setIsDropdownOpen((prev) => !prev)} // 드롭다운 토글
+                                        >
                                             <Avatar className="h-8 w-8">
                                                 {session.user.image ? (
                                                     <AvatarImage src={session.user.image} alt={session.user.name || ''} />
@@ -91,7 +96,10 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
                                             </Avatar>
                                         </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-56">
+                                    <DropdownMenuContent
+                                        isOpen={isDropdownOpen} // 드롭다운 열림 상태 전달
+                                        onClose={() => setIsDropdownOpen(false)} // 드롭다운 닫기 핸들러
+                                    >
                                         <div className="flex items-center justify-start gap-2 p-2">
                                             <div className="flex flex-col space-y-1 leading-none">
                                                 {session.user.name && (
