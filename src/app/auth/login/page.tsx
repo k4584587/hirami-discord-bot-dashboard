@@ -1,3 +1,5 @@
+// src/app/auth/login/page.tsx
+
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -6,11 +8,10 @@ import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
     const searchParams = useSearchParams();
-    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     const from = searchParams.get('from') ?? '/dashboard';
 
     return (
-        <div className="h-screen grid place-items-center bg-background p-4">
+        <div className="flex items-center justify-center h-full bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1 text-center">
                     <CardTitle className="text-2xl">관리자 로그인</CardTitle>
@@ -44,7 +45,7 @@ export default function LoginPage() {
                             디스코드로 로그인
                         </Button>
                         <p className="text-sm text-center text-muted-foreground">
-                            봇 관리자만 로그인할 수 있습니다
+                            봇 관리
                         </p>
                     </div>
                 </CardContent>
@@ -52,3 +53,6 @@ export default function LoginPage() {
         </div>
     );
 }
+
+// 레이아웃을 사용하지 않도록 설정
+LoginPage.getLayout = (page: React.ReactNode) => page;
