@@ -21,7 +21,6 @@ import {
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
     CardTitle
 } from "@/components/ui/card";
@@ -46,7 +45,6 @@ const siteData = [
 
 export default function CrawlingSitesPage() {
     const [searchTerm, setSearchTerm] = useState('');
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     return (
         <div className="space-y-6 p-6">

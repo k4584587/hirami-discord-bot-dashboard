@@ -1,35 +1,46 @@
-// src/app/auth/login/page.tsx
+"use client";
 
-'use client';
-
+import { signIn, useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
+    const { data: session, status } = useSession();
+    const router = useRouter();
     const searchParams = useSearchParams();
-    const from = searchParams.get('from') ?? '/dashboard';
+    const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push(callbackUrl);
+        }
+    }, [session, status, router, callbackUrl]);
+
+    const handleLogin = async () => {
+        try {
+            await signIn("discord", {
+                callbackUrl: callbackUrl,
+                redirect: true
+            });
+        } catch (error) {
+            console.error("Login failed:", error);
+        }
+    };
 
     return (
         <div className="flex items-center justify-center h-full bg-background p-4">
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1 text-center">
                     <CardTitle className="text-2xl">관리자 로그인</CardTitle>
-                    <CardDescription>
-                        디스코드 계정으로 로그인하여 봇을 관리하세요
-                    </CardDescription>
+                    <CardDescription>디스코드 계정으로 로그인하여 봇을 관리하세요</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
                         <Button
                             className="w-full bg-[#5865F2] hover:bg-[#4752c4] text-white"
-                            onClick={() => {
-                                const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
-                                const redirectUri = encodeURIComponent(`${window.location.origin}/api/auth/callback`);
-                                const scope = 'identify guilds';
-
-                                window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${from}`;
-                            }}
+                            onClick={handleLogin}
                         >
                             <svg
                                 className="w-5 h-5 mr-2"
@@ -37,15 +48,15 @@ export default function LoginPage() {
                                 viewBox="0 -28.5 256 256"
                             >
                                 <path
-                                    d="M216.856339,16.5966031 C200.285002,8.84328665 182.566144,3.2084988 164.041564,0 C161.766523,4.11318106 159.108624,9.64549908 157.276099,14.0464379 C137.583995,11.0849896 118.072967,11.0849896 98.7430163,14.0464379 C96.9108417,9.64549908 94.1925838,4.11318106 91.8971895,0 C73.3526068,3.2084988 55.6133949,8.86399117 39.0420583,16.6376612 C5.61752293,67.146514 -3.4433191,116.400813 1.08711069,164.955721 C23.2560196,181.510915 44.7403634,191.567697 65.8621325,198.148576 C71.0772151,190.971126 75.7283628,183.341335 79.7352139,175.300261 C72.104019,172.400575 64.7949724,168.822202 57.8887866,164.667963 C59.7209612,163.310589 61.5131304,161.891452 63.2445898,160.431257 C105.36741,180.133187 151.134928,180.133187 192.754523,160.431257 C194.506336,161.891452 196.298154,163.310589 198.110326,164.667963 C191.183787,168.842556 183.854737,172.420929 176.223542,175.320965 C180.230393,183.341335 184.861538,190.991831 190.096624,198.16893 C211.238746,191.588051 232.743023,181.531619 254.911949,164.955721 C260.227747,108.668201 245.831087,59.8662432 216.856339,16.5966031 Z"
+                                    d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"
                                     fill="currentColor"
                                     fillRule="nonzero"
                                 />
                             </svg>
-                            디스코드로 로그인
+                            Discord로 로그인
                         </Button>
                         <p className="text-sm text-center text-muted-foreground">
-                            봇 관리
+                            봇 관리자만 로그인할 수 있습니다
                         </p>
                     </div>
                 </CardContent>
@@ -53,6 +64,3 @@ export default function LoginPage() {
         </div>
     );
 }
-
-// 레이아웃을 사용하지 않도록 설정
-LoginPage.getLayout = (page: React.ReactNode) => page;
