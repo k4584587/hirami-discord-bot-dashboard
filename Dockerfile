@@ -21,6 +21,10 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
+# 볼륨 마운트 포인트 생성
+RUN mkdir -p /app/.next && \
+    mkdir -p /app/node_modules
+
 # 필요한 파일만 복사
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
@@ -33,10 +37,13 @@ COPY --from=builder /app/next.config.ts ./next.config.ts
 RUN yarn install --production --frozen-lockfile
 
 # 비루트 사용자로 실행
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-RUN chown -R nextjs:nodejs /app
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs && \
+    chown -R nextjs:nodejs /app
 USER nextjs
+
+# 볼륨 설정
+VOLUME ["/app/.next", "/app/node_modules"]
 
 # 포트 설정
 EXPOSE 3000
