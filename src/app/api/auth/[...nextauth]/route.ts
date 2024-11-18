@@ -1,20 +1,9 @@
-import NextAuth, { NextAuthOptions, User, Profile } from "next-auth";
+// src/app/api/auth/[...nextauth]/route.ts
+
+import NextAuth, { NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 
-interface ExtendedUser extends User {
-    id?: string;
-    username?: string;
-    discriminator?: string;
-    avatar?: string;
-}
-
-interface ExtendedProfile extends Profile {
-    id?: string;
-    username?: string;
-    discriminator?: string;
-    avatar?: string;
-}
-
+// Define the NextAuth options
 export const authOptions: NextAuthOptions = {
     providers: [
         DiscordProvider({
@@ -25,10 +14,22 @@ export const authOptions: NextAuthOptions = {
     ],
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+        /**
+         * @param {object} params
+         * @param {JWT} params.token
+         * @param {object} params.user
+         * @param {object} params.account
+         * @param {object} params.profile
+         */
         async jwt({ token, account, profile }) {
-            const extendedProfile = profile as ExtendedProfile;
-
             if (account && profile) {
+                // Type assertion is safe here because we've extended the JWT interface
+                const extendedProfile = profile as {
+                    id: string;
+                    username: string;
+                    discriminator: string;
+                    avatar: string;
+                };
                 token.id = extendedProfile.id;
                 token.username = extendedProfile.username;
                 token.discriminator = extendedProfile.discriminator;
@@ -36,19 +37,25 @@ export const authOptions: NextAuthOptions = {
             }
             return token;
         },
+        /**
+         * @param {object} params
+         * @param {Session} params.session
+         * @param {JWT} params.token
+         */
         async session({ session, token }) {
-            const extendedUser = session.user as ExtendedUser;
-
             if (token) {
-                extendedUser.id = token.id;
-                extendedUser.username = token.username as string;
-                extendedUser.discriminator = token.discriminator as string;
-                extendedUser.avatar = token.avatar as string;
+                session.user.id = token.id;
+                session.user.username = token.username;
+                session.user.discriminator = token.discriminator;
+                session.user.avatar = token.avatar;
             }
             return session;
         },
     },
 };
 
+// Initialize NextAuth with the defined options
 const handler = NextAuth(authOptions);
+
+// Export only GET and POST handlers
 export { handler as GET, handler as POST };
