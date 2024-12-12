@@ -66,8 +66,11 @@ export const authOptions: NextAuthOptions = {
 
 					const createData = await createResponse.json();
 
-					// result_code가 101인 경우 관리자 확인 API 호출
-					if (createData.result_code === '101') {
+					// result_code에 따라 로그인 허용 여부 결정
+					if (createData.result_code === '100') { // 중복되지 않은 경우
+						console.log('로그인 허용');
+						return true;
+					} else if (createData.result_code === '101') { // 중복된 경우
 						const checkResponse = await fetch(`${DISCORD_API_URL}/api/admin/check?discordId=${extendedProfile.id}`, {
 							method: 'POST',
 							headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -88,13 +91,16 @@ export const authOptions: NextAuthOptions = {
 							console.log('로그인 거부');
 							return false;
 						}
+					} else { // result_code가 100 또는 101이 아닌 경우
+						console.log('로그인 거부');
+						return false;
 					}
 				}
 			} catch (error) {
 				console.error('API 호출 중 오류 발생:', error);
 				return false;
 			}
-			return true;
+			return false; // 기본적으로 로그인 거부
 		},
 	},
 };
