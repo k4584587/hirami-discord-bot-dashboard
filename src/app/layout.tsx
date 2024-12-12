@@ -8,24 +8,24 @@ import { ClientLayout } from "@/components/layout/ClientLayout";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Discord Bot Admin",
-    description: "Discord Bot Administration Dashboard",
+	title: "Discord Bot Admin",
+	description: "Discord Bot Administration Dashboard",
 };
 
 export default function RootLayout({
-                                       children,
-                                   }: {
-    children: React.ReactNode;
+									   children,
+								   }: {
+	children: React.ReactNode;
 }) {
-    return (
-        <html lang="ko" suppressHydrationWarning>
-        <body className={inter.className}>
-        <ThemeProvider defaultTheme="light" storageKey="theme-preference">
-            <AuthProvider>
-                <ClientLayout>{children}</ClientLayout>
-            </AuthProvider>
-        </ThemeProvider>
-        </body>
-        </html>
-    );
+	return (
+		<html lang="ko" suppressHydrationWarning>
+		<body className={inter.className}>
+		<ThemeProvider defaultTheme="light" storageKey="theme-preference">
+			<AuthProvider>
+				<ClientLayout>{children}</ClientLayout>
+			</AuthProvider>
+		</ThemeProvider>
+		</body>
+		</html>
+	);
 }
