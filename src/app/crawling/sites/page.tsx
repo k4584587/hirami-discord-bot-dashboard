@@ -156,9 +156,8 @@ export default function CrawlingSitesPage() {
 	  });
 	  setIsAddDialogOpen(false);
 	  setError(null); // 성공 시 에러 초기화
-	} catch (error: any) {
+	} catch (error) {
 	  console.error(error);
-	  setError(error.message || '사이트 추가에 실패했습니다.');
 	}
   };
 
@@ -186,9 +185,8 @@ export default function CrawlingSitesPage() {
 		prev.map((site) => (site.id === updatedSite.id ? updatedSite : site))
 	  );
 	  handleCloseEditDialog();
-	} catch (error: any) {
+	} catch (error) {
 	  console.error(error);
-	  setError(error.message || '사이트 수정에 실패했습니다.');
 	} finally {
 	  setIsLoading(false);
 	}
@@ -208,10 +206,9 @@ export default function CrawlingSitesPage() {
 	  }
 
 	  setSiteData((prev) => prev.filter((site) => site.id !== id));
-	} catch (error: any) {
+	} catch (error) {
 	  console.error(error);
-	  setError(error.message || '사이트 삭제에 실패했습니다.');
-	}
+	  }
   };
 
   return (
@@ -395,11 +392,7 @@ export default function CrawlingSitesPage() {
 						<TableCell className="text-right">
 						  <div className="flex justify-end space-x-2">
 							<Button variant="outline" size="icon">
-							  {site.isActive ? (
-								<StopCircle className="h-4 w-4" />
-							  ) : (
-								<PlayCircle className="h-4 w-4" />
-							  )}
+							  <PlayCircle className="h-4 w-4" />
 							</Button>
 							<Button variant="outline" size="icon" onClick={() => handleEditClick(site)}>
 							  <Edit2 className="h-4 w-4" />
