@@ -32,7 +32,6 @@ import {
   Edit2,
   Trash2,
   PlayCircle,
-  StopCircle,
 } from "lucide-react";
 
 interface CrawlingSite {
@@ -210,6 +209,34 @@ export default function CrawlingSitesPage() {
 	  console.error(error);
 	  }
   };
+
+	const handleCrawl = async (site: CrawlingSite) => {
+		try {
+			const response = await fetch("/api/crawl", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					url: site.url,
+					xpath: site.xpath,
+					assistantName: site.assistantName,
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error("크롤링 요청 실패!");
+			}
+
+			const result = await response.json();
+			console.log("크롤링 성공:", result);
+			alert("크롤링 작업이 성공적으로 완료되었습니다.");
+		} catch (error) {
+			console.error("크롤링 오류:", error);
+			alert("크롤링 작업에 실패했습니다.");
+		}
+	};
+
 
   return (
 	<div className="space-y-6 p-6">
@@ -391,7 +418,11 @@ export default function CrawlingSitesPage() {
 						</TableCell>
 						<TableCell className="text-right">
 						  <div className="flex justify-end space-x-2">
-							<Button variant="outline" size="icon">
+							<Button
+							  variant="outline"
+							  size="icon"
+							  onClick={() => handleCrawl(site)} // 사이트 데이터를 넘김
+							>
 							  <PlayCircle className="h-4 w-4" />
 							</Button>
 							<Button variant="outline" size="icon" onClick={() => handleEditClick(site)}>
