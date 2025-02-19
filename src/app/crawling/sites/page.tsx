@@ -100,7 +100,7 @@ export default function CrawlingSitesPage() {
 
 		const fetchCrawlingStatus = async () => {
 			try {
-				const response = await fetch('http://localhost:3002/api/crawling-status');
+				const response = await fetch('/api/crawling-status');
 				if (!response.ok) {
 					throw new Error("크롤링 상태를 가져오는 데 실패했습니다.");
 				}
@@ -268,7 +268,7 @@ export default function CrawlingSitesPage() {
 				xpath: site.xpath,
 			}).toString();
 
-			const eventSource = new EventSource(`http://localhost:3002/api/crawl?${queryParams}`);
+			const eventSource = new EventSource(`/api/crawl?${queryParams}`);
 
 			// 이벤트 수신
 			eventSource.onmessage = (event) => {
