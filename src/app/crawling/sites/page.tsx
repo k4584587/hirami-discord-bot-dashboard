@@ -697,16 +697,19 @@ export default function CrawlingSitesPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {crawlingData[0].crawlingSiteData.data.posts.map((post: Post) => (
-                        <TableRow key={post.id}>
-                          <TableCell>{post.id}</TableCell>
-                          <TableCell>{post.category}</TableCell>
-                          <TableCell className="max-w-[200px] truncate"><a
-                            href={post.boardUrl}>{post.title}</a></TableCell>
-                          <TableCell>{post.author}</TableCell>
-                          <TableCell>{post.date}</TableCell>
-                        </TableRow>
-                      ))}
+                      {[...crawlingData[0].crawlingSiteData.data.posts]
+                        .sort((a, b) => b.id - a.id)
+                        .map((post: Post) => (
+                          <TableRow key={post.id}>
+                            <TableCell>{post.id}</TableCell>
+                            <TableCell>{post.category}</TableCell>
+                            <TableCell className="max-w-[200px] truncate">
+                              <a href={post.boardUrl}>{post.title}</a>
+                            </TableCell>
+                            <TableCell>{post.author}</TableCell>
+                            <TableCell>{post.date}</TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 </div>
