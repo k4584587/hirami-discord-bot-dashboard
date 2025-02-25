@@ -1,4 +1,5 @@
 'use client';
+import React from 'react'; // JSX 파서를 위해 추가
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -309,6 +310,7 @@ export default function CrawlingSitesPage() {
     }
   };
 
+  // 사이트 목록에서 특정 사이트를 클릭했을 때 실행
   const handleSiteClick = async (siteId: number) => {
     try {
       const response = await fetch(`/api/crawling-data?siteId=${siteId}`);
@@ -323,6 +325,7 @@ export default function CrawlingSitesPage() {
 
   return (
     <div className="space-y-6 p-6">
+      {/* 상단 제목 및 안내 */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -334,6 +337,7 @@ export default function CrawlingSitesPage() {
         </div>
       </div>
 
+      {/* 사이트 목록 카드 */}
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
@@ -431,6 +435,7 @@ export default function CrawlingSitesPage() {
           </div>
         </CardHeader>
         <CardContent>
+          {/* 검색 영역 */}
           <div className="flex justify-between items-center mb-4">
             <div className="flex w-full max-w-sm items-center space-x-2">
               <Input
@@ -445,6 +450,7 @@ export default function CrawlingSitesPage() {
             </div>
           </div>
 
+          {/* 테이블 */}
           <div className="rounded-md border">
             <Table>
               <TableHeader>
@@ -655,65 +661,82 @@ export default function CrawlingSitesPage() {
           <DialogHeader>
             <DialogTitle>크롤링 데이터</DialogTitle>
           </DialogHeader>
-          {crawlingData && crawlingData[0] && (
-            <div className="space-y-4">
-              {/* ▼▼▼ 수정된 "사이트 정보" 영역 ▼▼▼ */}
-              <div className="space-y-2">
-                <h3 className="font-semibold mb-2">사이트 정보</h3>
-                <p>
-                  <span className="font-semibold">사이트명:</span>{' '}
-                  {crawlingData[0].crawlingSite.name}
-                </p>
-                <p>
-                  <span className="font-semibold">URL:</span>{' '}
-                  <a
-                    href={crawlingData[0].crawlingSite.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline text-blue-500 inline-block max-w-xs overflow-hidden text-ellipsis whitespace-nowrap align-middle"
-                    title={crawlingData[0].crawlingSite.url}
-                  >
-                    {crawlingData[0].crawlingSite.url}
-                  </a>
-                </p>
-                <p>
-                  <span className="font-semibold">Assistant:</span>{' '}
-                  {crawlingData[0].crawlingSite.assistantName}
-                </p>
-              </div>
-              {/* ▲▲▲ 수정된 "사이트 정보" 영역 ▲▲▲ */}
 
-              <div>
-                <h3 className="font-semibold mb-2">게시물 목록</h3>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>ID</TableHead>
-                        <TableHead>카테고리</TableHead>
-                        <TableHead>제목</TableHead>
-                        <TableHead>작성자</TableHead>
-                        <TableHead>날짜</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {[...crawlingData[0].crawlingSiteData.data.posts]
-                        .sort((a, b) => b.id - a.id)
-                        .map((post: Post) => (
-                          <TableRow key={post.id}>
-                            <TableCell>{post.id}</TableCell>
-                            <TableCell>{post.category}</TableCell>
-                            <TableCell className="max-w-[200px] truncate">
-                              <a href={post.boardUrl}>{post.title}</a>
-                            </TableCell>
-                            <TableCell>{post.author}</TableCell>
-                            <TableCell>{post.date}</TableCell>
+          {crawlingData && crawlingData.length > 0 ? (
+            (() => {
+              // 여러 번의 크롤링 데이터가 하나의 사이트에 대한 것이라면
+              // 해당 사이트 정보는 동일할 것이므로 첫 번째 항목의 정보를 사용합니다.
+              const firstItem = crawlingData[0];
+              // 모든 포스트를 하나로 합쳐서 보여줍니다.
+              const combinedPosts = crawlingData.flatMap(item => item.crawlingSiteData.data.posts);
+              // ID 기준으로 내림차순 정렬
+              combinedPosts.sort((a, b) => b.id - a.id);
+
+              return (
+                <div className="space-y-4">
+                  {/* 사이트 정보 */}
+                  <div className="space-y-2">
+                    <h3 className="font-semibold mb-2">사이트 정보</h3>
+                    <p>
+                      <span className="font-semibold">사이트명:</span>{' '}
+                      {firstItem.crawlingSite.name}
+                    </p>
+                    <p>
+                      <span className="font-semibold">URL:</span>{' '}
+                      <a
+                        href={firstItem.crawlingSite.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline text-blue-500 inline-block max-w-xs overflow-hidden text-ellipsis whitespace-nowrap align-middle"
+                        title={firstItem.crawlingSite.url}
+                      >
+                        {firstItem.crawlingSite.url}
+                      </a>
+                    </p>
+                    <p>
+                      <span className="font-semibold">Assistant:</span>{' '}
+                      {firstItem.crawlingSite.assistantName}
+                    </p>
+                  </div>
+
+                  {/* 게시물 목록 (합쳐진) */}
+                  <div>
+                    <h3 className="font-semibold mb-2">게시물 목록</h3>
+                    <div className="rounded-md border">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>ID</TableHead>
+                            <TableHead>카테고리</TableHead>
+                            <TableHead>제목</TableHead>
+                            <TableHead>작성자</TableHead>
+                            <TableHead>날짜</TableHead>
                           </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {combinedPosts.map((post: Post) => (
+                            <TableRow key={post.id}>
+                              <TableCell>{post.id}</TableCell>
+                              <TableCell>{post.category}</TableCell>
+                              <TableCell className="max-w-[200px] truncate">
+                                <a href={post.boardUrl} target="_blank" rel="noopener noreferrer">
+                                  {post.title}
+                                </a>
+                              </TableCell>
+                              <TableCell>{post.author}</TableCell>
+                              <TableCell>{post.date}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              );
+            })()
+          ) : (
+            <div className="text-center text-muted-foreground">
+              데이터가 없습니다.
             </div>
           )}
         </DialogContent>
