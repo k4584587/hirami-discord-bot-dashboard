@@ -710,7 +710,6 @@ export default function CrawlingSitesPage() {
                             <TableHead>카테고리</TableHead>
                             <TableHead>제목</TableHead>
                             <TableHead>작성자</TableHead>
-                            <TableHead>날짜</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -724,7 +723,6 @@ export default function CrawlingSitesPage() {
                                 </a>
                               </TableCell>
                               <TableCell>{post.author}</TableCell>
-                              <TableCell>{post.date}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
